@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "extra"
+version = "0.1.0"
+description = "Client monitoring utilities"
+authors = [{name="memekcode"}]
+dependencies = [
+    "aiohttp"
+]
